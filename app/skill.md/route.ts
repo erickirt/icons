@@ -13,6 +13,8 @@ description: Install and use animated React icons from ${SITE.URL}
 
 # ${SITE.NAME} skill
 
+> For the complete documentation index, see [llms.txt](${SITE.URL}/llms.txt). Per-icon markdown is at \`${SITE.URL}/icons/<name>.md\`. An MCP server is available at \`${SITE.URL}/mcp\`.
+
 Use this skill when a user asks to add an animated icon to a React or Next.js project, or when they reference ${SITE.NAME}.
 
 ## Discover available icons

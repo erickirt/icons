@@ -12,9 +12,13 @@ const markdownResponse = (body: string) =>
     headers: { "Content-Type": "text/markdown; charset=utf-8" },
   });
 
+const LLMS_DIRECTIVE = `> For the complete documentation index, see [llms.txt](${SITE.URL}/llms.txt). Per-icon markdown is at \`${SITE.URL}/icons/<name>.md\`. An MCP server is available at \`${SITE.URL}/mcp\`.`;
+
 const renderHome = () => {
   const icons = getIcons();
   return `# ${SITE.NAME}
+
+${LLMS_DIRECTIVE}
 
 > ${SITE.DESCRIPTION.SHORT}
 
@@ -92,6 +96,8 @@ const renderSponsorship = () => {
 
   return `# Sponsor ${SITE.NAME}
 
+${LLMS_DIRECTIVE}
+
 > Support the development of ${SITE.NAME} — a free, open-source library of animated React icons.
 
 Sponsorship is entirely optional. The library is MIT licensed and free for personal and commercial use. This page exists for those who asked for a way to give back.
@@ -144,6 +150,8 @@ const renderIcon = (slug: string) => {
       : "";
 
   return `# ${pascal}
+
+${LLMS_DIRECTIVE}
 
 > Animated ${readable} icon for React — part of ${SITE.NAME}.
 

@@ -8,13 +8,13 @@ import { Card, CardActions, CardTitle } from "@/components/card";
 import { ICON_LIST } from "@/icons";
 import { SearchInput } from "./search-input";
 
-type Props = {
-  icons: Icon[];
-};
-
-const INITIAL_VISIBLE = 30;
+const INITIAL_VISIBLE = 18;
 const CHUNK_SIZE = 50;
 
+const ALL_ICONS: Icon[] = ICON_LIST.map(({ name, keywords }) => ({
+  name,
+  keywords,
+}));
 const ICON_MAP = new Map(ICON_LIST.map((item) => [item.name, item.icon]));
 
 const IconItem = ({
@@ -51,7 +51,7 @@ const IconItem = ({
   );
 };
 
-const IconsList = ({ icons }: Props) => {
+const IconsList = () => {
   const [searchValue, setSearchValue] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
@@ -60,7 +60,7 @@ const IconsList = ({ icons }: Props) => {
 
   const fuse = useMemo(
     () =>
-      new Fuse(icons, {
+      new Fuse(ALL_ICONS, {
         keys: [
           { name: "name", weight: 3 },
           { name: "keywords", weight: 2 },
@@ -71,16 +71,16 @@ const IconsList = ({ icons }: Props) => {
         isCaseSensitive: false,
         minMatchCharLength: 2,
       }),
-    [icons]
+    []
   );
 
   const trimmedSearch = deferredSearchValue.trim();
   const isSearching = trimmedSearch.length > 0;
 
   const filteredIcons = useMemo(() => {
-    if (!isSearching) return icons;
+    if (!isSearching) return ALL_ICONS;
     return fuse.search(trimmedSearch).map((result) => result.item);
-  }, [fuse, icons, isSearching, trimmedSearch]);
+  }, [fuse, isSearching, trimmedSearch]);
 
   const visibleIcons = isSearching
     ? filteredIcons

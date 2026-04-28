@@ -1,6 +1,11 @@
 import { LINK, SITE } from "@/constants";
+import { SERVER_EVENT, trackServer } from "@/lib/server-analytics";
 
-export function GET() {
+export function GET(req: Request) {
+  trackServer(SERVER_EVENT.LLMS_VIEW, {
+    page: "skill.md",
+    userAgent: req.headers.get("user-agent") ?? "",
+  });
   const content = `---
 name: ${SITE.NAME}
 description: Install and use animated React icons from ${SITE.URL}

@@ -3,6 +3,7 @@ import { LINK, SITE } from "@/constants";
 import { ICON_LIST } from "@/icons";
 import { SUPPORT_LIST } from "@/lib/data/support-list";
 import { kebabToPascalCase } from "@/lib/kebab-to-pascal";
+import { SERVER_EVENT, trackServer } from "@/lib/server-analytics";
 
 type Params = { params: Promise<{ path?: string[] }> };
 
@@ -102,12 +103,36 @@ Source page: ${SITE.URL}/sponsorship
 `;
 };
 
+const findSimilarIcons = (icon: { name: string; keywords: string[] }) => {
+  const currentKeywords = new Set(icon.keywords);
+  return ICON_LIST.filter((i) => i.name !== icon.name)
+    .map((i) => ({
+      icon: i,
+      score: i.keywords.filter((kw) => currentKeywords.has(kw)).length,
+    }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6)
+    .map((item) => item.icon);
+};
+
 const renderIcon = (slug: string) => {
   const icon = ICON_LIST.find((i) => i.name === slug);
   if (!icon) return null;
 
   const pascal = kebabToPascalCase(icon.name);
   const readable = icon.name.replace(/-/g, " ");
+  const similar = findSimilarIcons(icon);
+
+  const similarSection =
+    similar.length > 0
+      ? `\n## Similar icons\n\n${similar
+          .map((i) => {
+            const p = kebabToPascalCase(i.name);
+            return `- [${p}](${SITE.URL}/icons/${i.name}.md)`;
+          })
+          .join("\n")}\n`
+      : "";
 
   return `# ${pascal}
 
@@ -136,23 +161,36 @@ The component animates on hover by default. All standard SVG props are forwarded
 ## Keywords
 
 ${icon.keywords.map((k) => `- ${k}`).join("\n")}
-`;
+${similarSection}`;
 };
 
-export async function GET(_: Request, { params }: Params) {
+export async function GET(req: Request, { params }: Params) {
   const { path = [] } = await params;
+  const userAgent = req.headers.get("user-agent") ?? "";
 
   if (path.length === 0) {
+    trackServer(SERVER_EVENT.MARKDOWN_VIEW, { page: "home", userAgent });
     return markdownResponse(renderHome());
   }
 
   if (path.length === 1 && path[0] === "sponsorship") {
+    trackServer(SERVER_EVENT.MARKDOWN_VIEW, {
+      page: "sponsorship",
+      userAgent,
+    });
     return markdownResponse(renderSponsorship());
   }
 
   if (path.length === 2 && path[0] === "icons") {
     const md = renderIcon(path[1]);
-    if (md) return markdownResponse(md);
+    if (md) {
+      trackServer(SERVER_EVENT.MARKDOWN_VIEW, {
+        page: "icon",
+        slug: path[1],
+        userAgent,
+      });
+      return markdownResponse(md);
+    }
   }
 
   return new Response("Not found", { status: 404 });

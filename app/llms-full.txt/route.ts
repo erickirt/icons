@@ -1,8 +1,13 @@
 import { LINK, SITE } from "@/constants";
 import { ICON_LIST } from "@/icons";
 import { kebabToPascalCase } from "@/lib/kebab-to-pascal";
+import { SERVER_EVENT, trackServer } from "@/lib/server-analytics";
 
-export function GET() {
+export function GET(req: Request) {
+  trackServer(SERVER_EVENT.LLMS_VIEW, {
+    page: "llms-full.txt",
+    userAgent: req.headers.get("user-agent") ?? "",
+  });
   const sections = ICON_LIST.map((icon) => {
     const pascal = kebabToPascalCase(icon.name);
     const readable = icon.name.replace(/-/g, " ");

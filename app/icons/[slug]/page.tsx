@@ -49,6 +49,9 @@ export const generateMetadata = async ({
     description,
     alternates: {
       canonical: `/icons/${slug}`,
+      types: {
+        "text/markdown": `/icons/${slug}.md`,
+      },
     },
     openGraph: {
       ...baseMetadata.openGraph,

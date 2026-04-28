@@ -4,13 +4,21 @@ const TRAILING_SLASH = /\/$/;
 const MD_SUFFIX = /\.md$/;
 const FILE_EXTENSION = /\.[a-z0-9]+$/i;
 
-const PASSTHROUGH_PREFIXES = ["/_next", "/api", "/r/", "/md", "/assets"];
+const PASSTHROUGH_PREFIXES = [
+  "/_next",
+  "/api",
+  "/r/",
+  "/md",
+  "/assets",
+  "/mcp",
+];
 const PASSTHROUGH_PATHS = new Set([
   "/llms.txt",
   "/llms-full.txt",
   "/skill.md",
   "/sitemap.xml",
   "/robots.txt",
+  "/icons/llms.txt",
 ]);
 
 const isPassthrough = (pathname: string) => {

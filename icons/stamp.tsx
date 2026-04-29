@@ -16,7 +16,6 @@ interface StampIconProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
 }
 
-// Handle + base press down and bounce back up
 const STAMP_VARIANTS: Variants = {
   normal: {
     translateY: 0,
@@ -32,7 +31,6 @@ const STAMP_VARIANTS: Variants = {
   },
 };
 
-// Ink line flashes bright when stamp hits, then settles
 const INK_VARIANTS: Variants = {
   normal: {
     opacity: 1,
